@@ -19,7 +19,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import com.alibaba.csp.sentinel.Entry;
 import com.alibaba.csp.sentinel.context.Context;
-import com.alibaba.csp.sentinel.slotchain.ResourceWrapper;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager;
 import com.alibaba.csp.sentinel.util.AssertUtil;
@@ -31,6 +30,8 @@ import com.alibaba.csp.sentinel.util.function.BiConsumer;
  * @since 1.8.0
  */
 public abstract class AbstractCircuitBreaker implements CircuitBreaker {
+
+    protected final double RATIO_MAX_VALUE = 1.0d;
 
     protected final DegradeRule rule;
     protected final int recoveryTimeoutMs;
@@ -122,7 +123,7 @@ public abstract class AbstractCircuitBreaker implements CircuitBreaker {
         }
         return false;
     }
-    
+
     private void notifyObservers(CircuitBreaker.State prevState, CircuitBreaker.State newState, Double snapshotValue) {
         for (CircuitBreakerStateChangeObserver observer : observerRegistry.getStateChangeObservers()) {
             observer.onStateChange(prevState, newState, rule, snapshotValue);

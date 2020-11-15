@@ -19,7 +19,6 @@ import java.util.List;
 
 import com.alibaba.csp.sentinel.Entry;
 import com.alibaba.csp.sentinel.context.Context;
-import com.alibaba.csp.sentinel.slotchain.ResourceWrapper;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
 import com.alibaba.csp.sentinel.slots.statistic.base.LeapArray;
 import com.alibaba.csp.sentinel.slots.statistic.base.LongAdder;
@@ -107,6 +106,11 @@ public class ExceptionCircuitBreaker extends AbstractCircuitBreaker {
         if (strategy == DEGRADE_GRADE_EXCEPTION_RATIO) {
             // Use errorRatio
             curCount = errCount * 1.0d / totalCount;
+            // special case when ratio equals 1.0
+            if (Double.compare(curCount, threshold) == 0 && Double.compare(threshold, RATIO_MAX_VALUE) == 0) {
+                transformToOpen(curCount);
+                return;
+            }
         }
         if (curCount > threshold) {
             transformToOpen(curCount);

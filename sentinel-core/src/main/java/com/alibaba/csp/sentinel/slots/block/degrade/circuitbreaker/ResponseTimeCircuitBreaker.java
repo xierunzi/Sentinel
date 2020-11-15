@@ -33,8 +33,6 @@ import com.alibaba.csp.sentinel.util.TimeUtil;
  */
 public class ResponseTimeCircuitBreaker extends AbstractCircuitBreaker {
 
-    private static final double SLOW_REQUEST_RATIO_MAX_VALUE = 1.0d;
-
     private final long maxAllowedRt;
     private final double maxSlowRequestRatio;
     private final int minRequestAmount;
@@ -112,7 +110,7 @@ public class ResponseTimeCircuitBreaker extends AbstractCircuitBreaker {
             transformToOpen(currentRatio);
         }
         if (Double.compare(currentRatio, maxSlowRequestRatio) == 0 &&
-                Double.compare(maxSlowRequestRatio, SLOW_REQUEST_RATIO_MAX_VALUE) == 0) {
+                Double.compare(maxSlowRequestRatio, RATIO_MAX_VALUE) == 0) {
             transformToOpen(currentRatio);
         }
     }
